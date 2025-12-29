@@ -1,20 +1,9 @@
-const sqlite3 = require("sqlite3").verbose();
+import { kv } from "@vercel/kv";
 
-// Create or open database file
-const db = new sqlite3.Database("./pastes.db");
+export async function savePaste(paste) {
+  await kv.set(`paste:${paste.id}`, paste);
+}
 
-// Create table
-db.serialize(() => {
-  db.run(`
-    CREATE TABLE IF NOT EXISTS pastes (
-      id TEXT PRIMARY KEY,
-      content TEXT NOT NULL,
-      created_at INTEGER NOT NULL,
-      expires_at INTEGER,
-      max_views INTEGER,
-      views INTEGER DEFAULT 0
-    )
-  `);
-});
-
-module.exports = db;
+export async function getPaste(id) {
+  return await kv.get(`paste:${id}`);
+}
